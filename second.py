@@ -5,17 +5,13 @@ from messages import *
 
 bot = telebot.TeleBot(config.TOKEN)
 
-"""keybord"""
-
-back_button = types.KeyboardButton(text='Назад')
-
 
 def main(id, text):
     keyboard_main = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     admission = types.KeyboardButton(text='👨‍🎓 Поступление')
     fmpt = types.KeyboardButton(text='🤓 FMPT')
     pee = types.KeyboardButton(text='📝 Основной вступительный экзамен')  # pee - primary entrance exam
-    about = types.KeyboardButton(text='🏫 О РФМШ')
+    about = types.KeyboardButton(text='🏫 РФМШ')
     fund = types.KeyboardButton(text='💳 Fizmat Endowment Fund')
     keyboard_main.add(admission, fmpt, pee, about, fund)
     bot.send_message(id, text, reply_markup=keyboard_main)
@@ -47,6 +43,19 @@ def admission_(id, text):
     bot.send_message(id, text, reply_markup=keyboard_admission)
 
 
+def school(id, text):
+    keyboard_school = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    exams = types.KeyboardButton(text='АКР')
+    timetable = types.KeyboardButton(text='Расписание')
+    keyboard_school.add(exams, timetable, back_button)
+    bot.send_message(id, text, reply_markup=keyboard_school)
+
+
+"""keybord"""
+
+back_button = types.KeyboardButton(text='Назад')
+
+
 @bot.message_handler(commands=['start'])
 def start(message):
     main(message.chat.id, 'Что вы хотите узнать')
@@ -62,6 +71,9 @@ def msg(message):
     else:
         if user_message == '👨‍🎓 Поступление':
             admission_(id, '👨‍🎓 Поступление')
+
+        elif user_message == '🏫 РФМШ':
+            school(id, '🏫 РФМШ')
 
         elif user_message == '🤓 FMPT':
             main(id, FMPT)
@@ -84,7 +96,7 @@ def msg(message):
         elif user_message == '8 класс':
             exam(id, PEE_8)
 
-        elif user_message == '🤷‍♂️Что такое? 🤷‍♀':
+        elif user_message == '🤷‍♂️Что это такое? 🤷‍♀':
             fund(id, WHAT_IS_IT)
 
         elif user_message == 'В чем же преимущество':
