@@ -11,7 +11,7 @@ def main(id, text):
     admission = types.KeyboardButton(text='👨‍🎓 Поступление')
     fmpt = types.KeyboardButton(text='🤓 FMPT')
     pee = types.KeyboardButton(text='📝 Основной вступительный экзамен')  # pee - primary entrance exam
-    about = types.KeyboardButton(text='🏫 РФМШ')
+    about = types.KeyboardButton(text='🏫 Ученикам')
     fund = types.KeyboardButton(text='💳 Fizmat Endowment Fund')
     keyboard_main.add(admission, fmpt, pee, about, fund)
     bot.send_message(id, text, reply_markup=keyboard_main)
@@ -72,8 +72,8 @@ def msg(message):
         if user_message == '👨‍🎓 Поступление':
             admission_(id, '👨‍🎓 Поступление')
 
-        elif user_message == '🏫 РФМШ':
-            school(id, '🏫 РФМШ')
+        elif user_message == '🏫 Ученикам':
+            school(id, '🏫 Ученикам')
 
         elif user_message == '🤓 FMPT':
             main(id, FMPT)
