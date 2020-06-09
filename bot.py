@@ -30,6 +30,16 @@ async def eight_grade(message: types.Message):
     await message.answer(messages.FMPT)
 
 
+@dp.message_handler(commands=['primary_entrance_exam_7'])
+async def eight_grade(message: types.Message):
+    await message.answer(messages.PEE_7)
+
+
+@dp.message_handler(commands=['primary_entrance_exam_8'])
+async def eight_grade(message: types.Message):
+    await message.answer(messages.PEE_8)
+
+
 """If user don't know what write to bot, we send him this message"""
 
 
