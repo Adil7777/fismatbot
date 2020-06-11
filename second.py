@@ -2,8 +2,12 @@ import telebot
 from telebot import types
 import config
 from messages import *
+from db import *
+import asyncio
+from datetime import datetime
 
 bot = telebot.TeleBot(config.TOKEN)
+init_db()
 
 
 def main(id, text):
@@ -51,6 +55,14 @@ def school(id, text):
     bot.send_message(id, text, reply_markup=keyboard_school)
 
 
+def akr(id, text):
+    keyboard_akr = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    first = types.KeyboardButton(text='7-10 классы')
+    second = types.KeyboardButton(text='11 классы')
+    keyboard_akr.add(first, second, back_button)
+    bot.send_message(id, text, reply_markup=keyboard_akr)
+
+
 """keybord"""
 
 back_button = types.KeyboardButton(text='Назад')
@@ -58,12 +70,14 @@ back_button = types.KeyboardButton(text='Назад')
 
 @bot.message_handler(commands=['start'])
 def start(message):
+    add_user(message.chat.id, True)
     main(message.chat.id, 'Что вы хотите узнать')
 
 
 @bot.message_handler(content_types=['text'])
 def msg(message):
     user_message = message.text
+    # print(message.from_user.id)
     id = message.chat.id
     if user_message not in user_messages:
         main(id, 'Извините, Ваш запрос не понятен. Пожалуйста, сформулируйте иначе?')
@@ -71,6 +85,12 @@ def msg(message):
     else:
         if user_message == '👨‍🎓 Поступление':
             admission_(id, '👨‍🎓 Поступление')
+
+        elif user_message == 'АКР':
+            akr(id, 'АКР')
+
+        elif user_message == 'Расписание':
+            pass
 
         elif user_message == '🏫 Ученикам':
             school(id, '🏫 Ученикам')
@@ -96,7 +116,7 @@ def msg(message):
         elif user_message == '8 класс':
             exam(id, PEE_8)
 
-        elif user_message == '🤷‍♂️Что это такое? 🤷‍♀':
+        elif user_message == '🤷‍♂️Что такое? 🤷‍♀':
             fund(id, WHAT_IS_IT)
 
         elif user_message == 'В чем же преимущество':
@@ -110,6 +130,14 @@ def msg(message):
 
         elif user_message == 'Назад':
             main(id, 'Что вы хотите узнать')
+
+
+async def schedule(wait_for):
+    while 1:
+        await asyncio.sleep(wait_for)
+
+        now = datetime.utcnow()
+        await main(755715325, str(now))
 
 
 if __name__ == "__main__":
