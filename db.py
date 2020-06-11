@@ -46,3 +46,10 @@ def add_user(user_id: int, status):
     c.execute('INSERT INTO users (user_id, status) VALUES (?, ?)', (user_id, status))
     conn.commit()
 
+
+def subscriber_exist(user_id):
+    conn = get__connection()
+    c = conn.cursor()
+    return c.execute('SELECT * FROM users WHERE (user_id) = ?', (user_id,))
+
+
