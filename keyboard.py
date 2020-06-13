@@ -47,7 +47,8 @@ class Keyboard:
 
     def akr(self):
         keyboard_akr = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-        first = types.KeyboardButton(text='7-10 классы')
-        second = types.KeyboardButton(text='11 классы')
-        keyboard_akr.add(first, second, self.back_button)
+        first = types.KeyboardButton(text='7-10 классы предметы')
+        second = types.KeyboardButton(text='11 классы предметы')
+        themes = types.KeyboardButton(text='Темы')
+        keyboard_akr.add(first, second, themes, self.back_button)
         return keyboard_akr

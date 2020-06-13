@@ -1,14 +1,13 @@
 import sqlite3
 
-__connection = None
-
 
 class DataBase:
+    __connection = None
+
     def get__connection(self):
-        global __connection
-        if __connection is None:
-            __connection = sqlite3.connect('Users.db', check_same_thread=False)
-        return __connection
+        if DataBase.__connection is None:
+            DataBase.__connection = sqlite3.connect('Users.db', check_same_thread=False)
+        return DataBase.__connection
 
     def init_db(self, force: bool = False):
         """ Проверить что нужные таблицы существуют, иначе создать их

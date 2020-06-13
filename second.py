@@ -1,26 +1,33 @@
-from aiogram import types, Bot, Dispatcher, executor
-import config
+"""import tools"""
+from aiogram import Bot, Dispatcher, executor
+import asyncio
+import logging
+
 from messages import *
 from db import DataBase
-import asyncio
-from datetime import datetime
-import logging
 from keyboard import Keyboard
+from news import News
+from exams_parser import Exam, Themes
+import config
 
 """Initialization"""
+
+exam = Exam()
 logging.basicConfig(level=logging.INFO)
 bot = Bot(config.TOKEN)
 dp = Dispatcher(bot)
 Database = DataBase()
+Database.init_db()
 keyboard = Keyboard()
+news = News('news.txt')
+themes = Themes()
 
 """keybord"""
 
 
 @dp.message_handler(commands=['start'])
 async def start(message):
-    if not Database.subscriber_exist(message.chat.id):
-        Database.add_user(message.chat.id, True)
+    Database.add_user(message.chat.id, True)
     keyboard_main = keyboard.main()
     await bot.send_message(message.chat.id, 'Что вы хотите узнать', reply_markup=keyboard_main)
 
@@ -99,6 +106,19 @@ async def msg(message):
             keyboard_main = keyboard.main()
             send_text = 'Что вы хотите узнать'
 
+        elif user_message == '7-10 классы предметы':
+            keyboard_main = keyboard.akr()
+            send_text = EXAMS
+
+        elif user_message == '11 классы предметы':
+            keyboard_main = keyboard.akr()
+            send_text = exam.parse_11()
+
+        elif user_message == 'Темы':
+            keyboard_main = keyboard.akr()
+            first, second, third = themes.parse()
+            send_text = '1 четверть {}\n\n2 четверть {}\n\n3 четверть{}'.format(first, second, third)
+
         await bot.send_message(id, send_text, reply_markup=keyboard_main)
 
 
@@ -106,13 +126,15 @@ async def schedule(wait_for):
     while 1:
         await asyncio.sleep(wait_for)
 
-        now = datetime.utcnow()
         user_ids = Database.get_users()
-        for user_id in user_ids:
-            await bot.send_message(user_id, str(now), disable_notification=True)
+        if not news.new_news():
+            href, text = news.get_href()
+            href, text = str(href), str(text)
+            for user_id in user_ids:
+                await bot.send_message(user_id, text + '\n' + href, disable_notification=True)
 
 
 if __name__ == "__main__":
     print('program starting')
-    dp.loop.create_task(schedule(3600))
+    dp.loop.create_task(schedule(10))
     executor.start_polling(dp, skip_updates=True)
