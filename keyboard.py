@@ -42,7 +42,8 @@ class Keyboard:
         keyboard_school = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
         exams = types.KeyboardButton(text='АКР')
         timetable = types.KeyboardButton(text='Расписание')
-        keyboard_school.add(exams, timetable, self.back_button)
+        voting = types.KeyboardButton(text='Выборы президента')
+        keyboard_school.add(exams, timetable, voting, self.back_button)
         return keyboard_school
 
     def akr(self):
@@ -52,3 +53,12 @@ class Keyboard:
         themes = types.KeyboardButton(text='Темы')
         keyboard_akr.add(first, second, themes, self.back_button)
         return keyboard_akr
+
+    def vot(self):
+        keyboard_vot = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+        one = types.KeyboardButton(text='1')
+        two = types.KeyboardButton(text='2')
+        three = types.KeyboardButton(text='3')
+        four = types.KeyboardButton(text='4')
+        keyboard_vot.add(one, two, three, four, self.back_button)
+        return keyboard_vot

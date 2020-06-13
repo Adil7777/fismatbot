@@ -9,6 +9,9 @@ from keyboard import Keyboard
 from news import News
 from exams_parser import Exam, Themes
 import config
+from Voting import create_cod, check_mail, send_mail
+from db_voit import DataBaseVot
+from cod import check_cod, read_cod
 
 """Initialization"""
 
@@ -18,11 +21,21 @@ bot = Bot(config.TOKEN)
 dp = Dispatcher(bot)
 Database = DataBase()
 Database.init_db()
+Vot = DataBaseVot()
+Vot.init_db()
 keyboard = Keyboard()
 news = News('news.txt')
 themes = Themes()
 
 """keybord"""
+
+
+def number(number):
+    try:
+        number = int(number)
+        return True
+    except Exception as e:
+        return False
 
 
 @dp.message_handler(commands=['start'])
@@ -37,8 +50,9 @@ async def msg(message):
     user_message = message.text
     id = message.chat.id
     keyboard_main = keyboard.main()
-    send_text = None
-    if user_message not in user_messages:
+    send_text = 's'
+    if user_message not in user_messages and '@' not in user_message and len(user_message) != 4 and not number(
+            str(user_message)):
         await bot.send_message(id, 'Извините, Ваш запрос не понятен. Пожалуйста, сформулируйте иначе?',
                                reply_markup=keyboard_main)
 
@@ -46,6 +60,34 @@ async def msg(message):
         if user_message == '👨‍🎓 Поступление':
             keyboard_main = keyboard.admission_()
             send_text = '👨‍🎓 Поступление'
+
+        if user_message == read_cod():
+            keyboard_main = keyboard.vot()
+            send_text = 'Проголосуйте'
+
+        elif '@' in user_message:
+            if check_mail(user_message):
+                if Vot.vot_exist(message.chat.id):
+                    code = create_cod()
+                    a = send_mail(str(user_message), str(code))
+                    check_cod(code)
+                    if a:
+                        keyboard_main = keyboard.school()
+                        send_text = 'На вашу корпоративную почту был отправлен код, введите его в поле чтобы ' \
+                                    'проголосовать.'
+                    else:
+                        keyboard_main = keyboard.school()
+                        send_text = str(a)
+                else:
+                    keyboard_main = keyboard.school()
+                    send_text = 'Вы уже проголосовали'
+            else:
+                keyboard_main = keyboard.school()
+                send_text = 'Надо ввести корпоративную почту физмата'
+
+        elif user_message == 'Выборы президента':
+            keyboard_main = keyboard.school()
+            send_text = 'Введите свою корпоративную почту, туда вам придет код, который вам надо будет ввести сюда'
 
         elif user_message == 'АКР':
             keyboard_main = keyboard.akr()
